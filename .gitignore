@@ -1,0 +1,12 @@
+node_modules/
+frontend/
+frontend/.next/
+backend/gym_erp_backup/
+backend/scratch/
+*.log
+.DS_Store
+# Environment files
+.env
+**/.env
+
+node_modules/
