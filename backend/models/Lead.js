@@ -48,6 +48,5 @@ const leadSchema = new mongoose.Schema({
 // Indexes for query speed
 leadSchema.index({ status: 1 });
 leadSchema.index({ source: 1 });
-leadSchema.index({ 'contact.phone': 1 });
 
 module.exports = mongoose.model('Lead', leadSchema);

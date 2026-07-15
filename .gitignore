@@ -1,12 +1,24 @@
+# Dependencies
 node_modules/
 frontend/node_modules/
+
+# Build outputs
 frontend/.next/
-backend/gym_erp_backup/
-backend/scratch/
-*.log
-.DS_Store
-# Environment files
+frontend/out/
+
+# Environment files (never commit these)
 .env
 **/.env
+*.env.local
 
-node_modules/
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup and scratch files
+backend/gym_erp_backup/
+backend/scratch/
