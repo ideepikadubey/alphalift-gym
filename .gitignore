@@ -1,5 +1,5 @@
 node_modules/
-frontend/
+frontend/node_modules/
 frontend/.next/
 backend/gym_erp_backup/
 backend/scratch/

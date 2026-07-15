@@ -155,7 +155,8 @@ exports.loginMember = async (req, res, next) => {
                 lastName: member.lastName,
                 phone: member.contact?.phone,
                 email: member.contact?.email,
-                role: 'member'
+                role: 'member',
+                assignedTrainer: member.assignedTrainer
             }
         });
     } catch (error) {
@@ -178,7 +179,8 @@ exports.getMemberMe = async (req, res, next) => {
                 lastName: member.lastName,
                 phone: member.contact?.phone,
                 email: member.contact?.email,
-                role: 'member'
+                role: 'member',
+                assignedTrainer: member.assignedTrainer
             }
         });
     } catch (error) {

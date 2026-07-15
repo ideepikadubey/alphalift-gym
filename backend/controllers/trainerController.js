@@ -59,10 +59,21 @@ exports.getTrainer = async (req, res, next) => {
             trainer: trainer._id
         });
 
+        // Check if there is an existing rating by this member
+        let memberRating = 0;
+        if (req.member) {
+            const Rating = require('../models/Rating');
+            const ratingRecord = await Rating.findOne({ member: req.member._id, trainer: trainer._id });
+            if (ratingRecord) {
+                memberRating = ratingRecord.rating;
+            }
+        }
+
         res.status(200).json({
             success: true,
             data: {
                 trainer,
+                memberRating,
                 stats: {
                     assignedMembers: assignedMembersCount,
                     workoutPlans: workoutPlansCount,
@@ -291,13 +302,71 @@ exports.getTrainerStats = async (req, res, next) => {
             },
             { $sort: { memberCount: -1 } }
         ]);
-
         res.status(200).json({
             success: true,
             data: {
                 totalTrainers,
                 trainersWithMembers
             }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Rate a trainer
+// @route   POST /api/v1/trainers/:id/rate
+// @access  Private (Members only)
+exports.rateTrainer = async (req, res, next) => {
+    try {
+        const { rating } = req.body;
+        const trainerId = req.params.id;
+
+        // Ensure user is authenticated as a member
+        if (!req.member) {
+            return next(new ErrorHandler('Only members can rate trainers', 403));
+        }
+
+        // Validate rating value
+        const ratingVal = Number(rating);
+        if (isNaN(ratingVal) || ratingVal < 1 || ratingVal > 5) {
+            return next(new ErrorHandler('Rating must be a number between 1 and 5', 400));
+        }
+
+        // Ensure member is assigned to this trainer
+        if (!req.member.assignedTrainer || req.member.assignedTrainer.toString() !== trainerId) {
+            return next(new ErrorHandler('You can only rate your assigned trainer', 403));
+        }
+
+        // Verify trainer exists
+        const trainer = await Trainer.findById(trainerId);
+        if (!trainer) {
+            return next(new ErrorHandler('Trainer not found', 404));
+        }
+
+        const Rating = require('../models/Rating');
+
+        // Upsert rating
+        let ratingRecord = await Rating.findOne({ member: req.member._id, trainer: trainerId });
+
+        if (ratingRecord) {
+            ratingRecord.rating = ratingVal;
+            await ratingRecord.save();
+        } else {
+            ratingRecord = await Rating.create({
+                member: req.member._id,
+                trainer: trainerId,
+                rating: ratingVal
+            });
+        }
+
+        // Fetch updated trainer details to return
+        const updatedTrainer = await Trainer.findById(trainerId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Trainer rated successfully',
+            data: updatedTrainer.rating
         });
     } catch (error) {
         next(error);

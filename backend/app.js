@@ -11,18 +11,7 @@ const app = express();
 // Security middleware
 app.use(helmet());
 app.use(cors({
-    origin: function(origin, callback) {
-        const allowed = [
-            'http://localhost:3000',
-            process.env.FRONTEND_URL
-        ].filter(Boolean);
-        // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin || allowed.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true
 }));
 
@@ -53,6 +42,7 @@ app.use('/api/v1/diets', require('./routes/diets'));
 app.use('/api/v1/progress', require('./routes/progress'));
 app.use('/api/v1/notifications', require('./routes/notifications'));
 app.use('/api/v1/dashboard', require('./routes/dashboard'));
+app.use('/api/v1/leads', require('./routes/leads'));
 
 // Health check
 app.get('/health', (req, res) => {

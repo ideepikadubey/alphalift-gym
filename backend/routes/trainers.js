@@ -9,7 +9,8 @@ const {
     getAssignedMembers,
     getTrainerAvailability,
     updateAvailability,
-    getTrainerStats
+    getTrainerStats,
+    rateTrainer
 } = require('../controllers/trainerController');
 const { protect, hasPermission } = require('../middleware/auth');
 
@@ -28,6 +29,9 @@ router.route('/:id')
     .get(getTrainer)
     .put(hasPermission('canManageTrainers'), updateTrainer)
     .delete(hasPermission('canManageTrainers'), deleteTrainer);
+
+// Rate a trainer (private for members)
+router.post('/:id/rate', rateTrainer);
 
 // Trainer assignments and availability
 router.post('/:trainerId/assign-member', hasPermission('canManageMembers'), assignMember);
