@@ -33,6 +33,7 @@ interface User {
   phone?: string;
   role: string;
   permissions?: Record<string, boolean>;
+  assignedTrainer?: string;
 }
 
 interface AuthContextType {

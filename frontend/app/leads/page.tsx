@@ -243,6 +243,8 @@ export default function LeadsPage() {
     return "cancelled";
   };
 
+  const totalPages = Math.ceil(total / limit);
+
   return (
     <DashboardLayout>
       <div className="page-container">
